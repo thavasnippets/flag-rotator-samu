@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
     <title>Flag Rotator (From JSON)</title>
     <style>
         body {
@@ -34,13 +33,13 @@
 
 <body>
 
-    <div style="font-size: 24px; margin-bottom: 10px;">
-        Time: <span id="timer">3</span>s |
-        Completed: <span id="count">0</span>
+    <div id="status" style="font-size: 24px; margin-bottom: 10px;">
+        Time: <span id="timer"></span>s |
+        Completed: <span id="count"></span>
     </div>
 
     <img id="flag" src="" alt="Flag">
-    <div style="display: none;" class="info" id="info"></div>
+    <div class="info" style="display: none;" id="info"></div>
 
     <script>
         // Paste your JSON here
@@ -1210,45 +1209,62 @@
         let index = 0;
         let timeLeft = 3;
         let completed = 0;
+        let totalTime = 0;
 
         const flagEl = document.getElementById("flag");
         const infoEl = document.getElementById("info");
         const timerEl = document.getElementById("timer");
         const countEl = document.getElementById("count");
+        const statusEl = document.getElementById("status");
 
         function showFlag() {
+            if (index >= countries.length) return;
+
             const country = countries[index];
 
             flagEl.src = country.flag_4x3;
 
             infoEl.innerHTML = `
-            <strong>${country.name}</strong><br>
-            ${country.capital ? "Capital: " + country.capital : ""}
-        `;
+                <strong>${country.name}</strong><br>
+                ${country.capital ? "Capital: " + country.capital : "No capital"}
+            `;
 
-            index = (index + 1) % countries.length;
-
-            // increment completed count
+            index++;
             completed++;
             countEl.textContent = completed;
 
-            // reset timer
             timeLeft = 3;
             timerEl.textContent = timeLeft;
         }
 
-        // countdown every second
-        setInterval(() => {
+        const interval = setInterval(() => {
             timeLeft--;
-            if (timeLeft >= 0) {
-                timerEl.textContent = timeLeft;
+            totalTime++;
+
+            timerEl.textContent = timeLeft;
+
+            if (timeLeft <= 0) {
+                if (index >= countries.length) {
+                    clearInterval(interval);
+
+       
+                    statusEl.style.display = "none";
+
+                    infoEl.innerHTML = `
+                        <strong>Completed!</strong><br>
+                        Total Time: ${(totalTime / 60).toFixed(2)} mins | Completed: ${completed}
+                    `;
+
+                    flagEl.style.display = "none";
+                    return;
+                }
+
+                showFlag();
             }
         }, 1000);
 
-        // change flag every 3 seconds
-        setInterval(showFlag, 3000);
-
         // initial load
+        timerEl.textContent = timeLeft;
         showFlag();
     </script>
 
