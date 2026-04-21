@@ -31,6 +31,31 @@
             text-align: center;
         }
 
+        .controls {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .controls button {
+            padding: 10px;
+            font-size: 18px;
+            border: 2px solid #333;
+            border-radius: 8px;
+            cursor: pointer;
+            background: white;
+            transition: background 0.2s;
+        }
+
+        .controls button:hover {
+            background: #dddddd;
+        }
+
+        .controls button.active {
+            background: #016106;
+            color: white;
+        }
+
         /* 🔥 FINAL SCREEN STYLE */
         .completed {
             position: fixed;
@@ -65,6 +90,10 @@
 
     <img id="flag" src="" alt="Flag">
     <div class="info" style="display: none;" id="info"></div>
+
+    <div class="controls" id="controls">
+        <button id="pauseBtn" onclick="togglePause()"> Pause</button>
+    </div>
 
     <script>
         const countries = [
@@ -246,7 +275,7 @@
                 "iso": true,
                 "name": "Cambodia"
             },
-            
+
             {
                 "capital": "Ottawa",
                 "code": "ca",
@@ -378,7 +407,7 @@
                 "name": "Ethiopia"
             },
 
-            
+
             {
                 "capital": "Helsinki",
                 "code": "fi",
@@ -500,7 +529,7 @@
                 "iso": true,
                 "name": "Indonesia"
             },
-           
+
             {
                 "capital": "Dublin",
                 "code": "ie",
@@ -548,7 +577,7 @@
                 "name": "Japan"
             },
 
-            
+
             {
                 "capital": "Astana",
                 "code": "kz",
@@ -577,7 +606,7 @@
                 "iso": true,
                 "name": "Kuwait"
             },
-            
+
             {
                 "capital": "Vientiane",
                 "code": "la",
@@ -597,7 +626,7 @@
                 "name": "Latvia"
             },
 
-            
+
             {
                 "capital": "Monrovia",
                 "code": "lr",
@@ -744,9 +773,9 @@
                 "iso": true,
                 "name": "Niger"
             },
-            
 
-            
+
+
             {
                 "capital": "Skopje",
                 "code": "mk",
@@ -804,7 +833,7 @@
                 "name": "Panama"
             },
 
-           
+
             {
                 "capital": "Lima",
                 "code": "pe",
@@ -862,7 +891,7 @@
                 "iso": true,
                 "name": "Romania"
             },
-            
+
 
             {
                 "capital": "Riyadh",
@@ -893,7 +922,7 @@
                 "name": "Singapore"
             },
 
-            
+
             {
                 "capital": "Pretoria",
                 "code": "za",
@@ -951,7 +980,7 @@
                 "iso": true,
                 "name": "Switzerland"
             },
-            
+
             {
                 "capital": "Taipei",
                 "code": "tw",
@@ -961,7 +990,7 @@
                 "iso": true,
                 "name": "Taiwan"
             },
-        
+
 
             {
                 "capital": "Bangkok",
@@ -1059,7 +1088,7 @@
                 "iso": true,
                 "name": "Venezuela"
             },
-            
+
 
             {
                 "capital": "Sana'a",
@@ -1094,13 +1123,14 @@
         let timeLeft = 3;
         let completed = 0;
         let totalTime = 0;
+        let paused = false;
 
         const flagEl = document.getElementById("flag");
         const infoEl = document.getElementById("info");
         const timerEl = document.getElementById("timer");
         const countEl = document.getElementById("count");
         const statusEl = document.getElementById("status");
-
+        const btn = document.getElementById('pauseBtn');
         function showFlag() {
             if (index >= countries.length) return;
 
@@ -1120,8 +1150,22 @@
             timeLeft = 3;
             timerEl.textContent = timeLeft;
         }
+        function togglePause() {
+            paused = !paused;
 
+            if (paused) {
+                btn.textContent = "Play";
+                btn.classList.add('active');
+
+            }
+            else {
+                btn.textContent = "Pause";
+                btn.classList.remove('active');
+            }
+
+        }
         const interval = setInterval(() => {
+            if (paused) return;
             timeLeft--;
             totalTime++;
 
@@ -1134,6 +1178,7 @@
                     // hide normal UI
                     statusEl.style.display = "none";
                     flagEl.style.display = "none";
+                    document.getElementById('controls').style.display = "none";
                     infoEl.classList.add("completed");
 
                     // final screen
